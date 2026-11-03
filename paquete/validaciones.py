@@ -7,12 +7,14 @@ def par_impar(numero: int) -> bool:
     Returns:
         bool: True si el número es par, False si es impar.
     """
+
     if numero == 0:
-        return True
+        resultado = True
     elif numero == 1:
-        return False
-        
-    return par_impar(numero - 2)
+        resultado = False
+    else:
+        resultado = par_impar(numero - 2)
+    return resultado
 
 
 def es_primo(numero: int) -> bool:
@@ -28,10 +30,12 @@ def es_primo(numero: int) -> bool:
         resultado = False
     else:
         resultado = True
+        #usar while en vez del for
+
         for i in range(2, int(numero ** 0.5) + 1):
             if numero % i == 0:
                 resultado = False
-                
+                break
     return resultado
 
 
@@ -68,18 +72,18 @@ def validar_rango(valor: int, minimo: int, maximo: int) -> bool:
         bool: True si el valor está dentro del rango, False en caso contrario.
     """
 
-    
-    
+
     if minimo > maximo or valor < minimo or valor > maximo:
-        return False
+        resultado = False
 
     medio = (minimo + maximo) // 2
+    
     if valor == medio:
-        return True
+        resultado= True
     elif valor < medio:
-        return validar_rango(valor, minimo, medio - 1)
+        resultado = validar_rango(valor, minimo, medio - 1)
     else:
-        return validar_rango(valor, medio + 1, maximo)
+        resultado = validar_rango(valor, medio + 1, maximo)
 
-
+    return resultado
 

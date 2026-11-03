@@ -1,4 +1,4 @@
-from validaciones import *
+from paquete.validaciones import *
 
 continuar = "s" or "S"
 usuario_registrado = "Pedro"
