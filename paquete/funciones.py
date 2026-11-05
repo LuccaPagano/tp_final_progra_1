@@ -1,3 +1,5 @@
+from .validaciones import *
+
 """Punto b (parte 3): creación, carga secuencial/distribuida y modificación de tablas.
 
 Solo listas y matrices:
@@ -9,18 +11,25 @@ Solo listas y matrices:
 
 COLUMNAS = ["Nombre", "Apellido", "Materia", "Nota PP", "Nota SP", "Nota final"]
 IDX_NOTAS = 3
+IDX_NOTA_PP = 3
+IDX_NOTA_SP = 4
+IDX_NOTA_FINAL = 5
 NOTA_MIN = 0
 NOTA_MAX = 10
 MAX_LARGO = 50
 MAX_FILAS = 1000
 
-T_NOMBRE = 0
-T_COLUMNAS = 1
-T_DENOMINACIONES = 2
-T_FILAS = 3
+TABLA_NOMBRE = 0
+TABLA_COLUMNAS = 1
+TABLA_DENOMINACIONES = 2
+TABLA_FILAS = 3
+
+USUARIO_INICIAL = "Pedro"
+CONTRASENIA_INICIAL = "1234"
+OPCIONES_MENU = ["a", "b", "c", "d", "e", "f"]
 
 
-# ------------------------------------------------------------- validaciones
+
 def recortar(texto: str) -> str:
     """Quita espacios y tabulaciones al inicio y al final."""
     inicio = 0
@@ -32,76 +41,7 @@ def recortar(texto: str) -> str:
     return texto[inicio:fin]
 
 
-def validar_numero(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por números (ASCII 48-57).
-    recibe un string.
-    retorna un bool.
-    '''
-    i = 0
-    es_numero = True
-
-    while i < len(cadena) and es_numero:
-        if ord(cadena[i]) < 48 or ord(cadena[i]) > 57:
-            es_numero = False
-        i += 1
-
-    return es_numero
-
-
-def validar_mayusculas(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por letras mayúsculas A-Z (ASCII 65-90).
-    recibe un string.
-    retorna un bool.
-    '''
-    i = 0
-    son_mayusculas = True
-
-    while i < len(cadena) and son_mayusculas:
-        if ord(cadena[i]) < 65 or ord(cadena[i]) > 90:
-            son_mayusculas = False
-        i += 1
-
-    return son_mayusculas
-
-
-def validar_minusculas(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por letras minúsculas a-z (ASCII 97-122).
-    recibe un string.
-    retorna un bool.
-    '''
-    i = 0
-    son_minusculas = True
-
-    while i < len(cadena) and son_minusculas:
-        if ord(cadena[i]) < 97 or ord(cadena[i]) > 122:
-            son_minusculas = False
-        i += 1
-
-    return son_minusculas
-
-
-def validar_acentuadas(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por letras acentuadas, ñ o ü
-    (códigos 192-255, excluyendo × (215) y ÷ (247)).
-    recibe un string.
-    retorna un bool.
-    '''
-    i = 0
-    son_acentuadas = True
-
-    while i < len(cadena) and son_acentuadas:
-        if ord(cadena[i]) < 192 or ord(cadena[i]) > 255 or ord(cadena[i]) == 215 or ord(cadena[i]) == 247:
-            son_acentuadas = False
-        i += 1
-
-    return son_acentuadas
-
-
-def a_minusculas(texto: str) -> str:
+def pasar_minusculas(texto: str) -> str:
     '''
     Pasa a minúscula las letras A-Z de un texto (suma 32 a su código ASCII).
     recibe un string.
@@ -118,51 +58,6 @@ def a_minusculas(texto: str) -> str:
         i += 1
 
     return resultado
-
-
-def es_entero(texto: str) -> bool:
-    """True si el texto es un entero sin signo."""
-    return len(texto) > 0 and validar_numero(texto)
-
-
-def es_nota(texto: str) -> bool:
-    """True si el texto es un número no negativo con a lo sumo un punto decimal."""
-    puntos = 0
-    posicion = 0
-    for i in range(len(texto)):
-        if texto[i] == ".":
-            puntos += 1
-            posicion = i
-    if puntos > 1:
-        resultado = False
-    elif puntos == 0:
-        resultado = len(texto) > 0 and validar_numero(texto)
-    else:
-        entero = texto[:posicion] + texto[posicion + 1:]
-        resultado = len(entero) > 0 and validar_numero(entero)
-    return resultado
-
-
-def es_nombre_valido(texto: str) -> bool:
-    '''
-    Valida que un texto no vacío esté compuesto solo por letras (mayúsculas, minúsculas o
-    acentuadas), espacios, guiones o apóstrofes.
-    recibe un string.
-    retorna un bool.
-    '''
-    i = 0
-    es_valido = len(texto) > 0 and len(texto) <= MAX_LARGO
-
-    while i < len(texto) and es_valido:
-        if (validar_mayusculas(texto[i]) or validar_minusculas(texto[i])
-                or validar_acentuadas(texto[i]) or texto[i] == " " or texto[i] == "-"
-                or texto[i] == "'"):
-            i += 1
-        else:
-            es_valido = False
-
-    return es_valido
-
 
 def leer_texto(mensaje: str) -> str:
     """Pide un texto no vacío de hasta MAX_LARGO caracteres."""
@@ -185,7 +80,7 @@ def leer_nombre(mensaje: str) -> str:
     return texto
 
 
-def sin_ceros_izquierda(texto: str) -> str:
+def sacar_ceros_izquierda(texto: str) -> str:
     '''
     Quita los ceros a la izquierda de una cadena numérica (deja al menos un carácter).
     recibe un string.
@@ -199,11 +94,11 @@ def sin_ceros_izquierda(texto: str) -> str:
     return texto[i:]
 
 
-def leer_entero(mensaje: str, minimo: int, maximo: int) -> int:
+def leer_entero_postivo(mensaje: str, minimo: int, maximo: int) -> int:
     """Pide un entero dentro de [minimo, maximo]."""
     valor = None
     while valor == None:
-        texto = sin_ceros_izquierda(recortar(input(mensaje)))
+        texto = sacar_ceros_izquierda(recortar(input(mensaje)))
         if es_entero(texto) == False:
             print(f"Error: ingrese un número entero positivo (o 0).")
         elif len(texto) > len(str(maximo)) or int(texto) < minimo or int(texto) > maximo:
@@ -227,41 +122,27 @@ def leer_nota(mensaje: str) -> float:
     return valor
 
 
-def esta_en_lista(lista: list, elemento: str) -> bool:
-    '''
-    Indica si un elemento se encuentra en una lista.
-    recibe una lista y un string.
-    retorna un bool.
-    '''
-    i = 0
-    encontrado = False
-
-    while i < len(lista) and encontrado == False:
-        if lista[i] == elemento:
-            encontrado = True
-        i += 1
-
-    return encontrado
-
-
 def leer_opcion(mensaje: str, opciones: list) -> str:
     """Pide una opción (en minúsculas) incluida en la lista."""
-    opcion = a_minusculas(recortar(input(mensaje)))
+    opcion = pasar_minusculas(recortar(input(mensaje)))
     while esta_en_lista(opciones, opcion) == False:
         lista = ""
-        for o in opciones:
-            lista += (", " if lista != "" else "") + o
+        for opcion_disponible in opciones:
+            if lista == "":
+                lista = opcion_disponible
+            else:
+                lista += ", " + opcion_disponible
         print(f"Error: opción no válida. Opciones posibles: {lista}.")
-        opcion = a_minusculas(recortar(input(mensaje)))
+        opcion = pasar_minusculas(recortar(input(mensaje)))
     return opcion
 
 
 def leer_si_no(mensaje: str) -> bool:
     """Pide s/n y devuelve True si la respuesta es s."""
-    respuesta = a_minusculas(recortar(input(f"{mensaje} (s/n): ")))
+    respuesta = pasar_minusculas(recortar(input(f"{mensaje} (s/n): ")))
     while respuesta != "s" and respuesta != "n":
         print(f"Error: responda 's' o 'n'.")
-        respuesta = a_minusculas(recortar(input(f"{mensaje} (s/n): ")))
+        respuesta = pasar_minusculas(recortar(input(f"{mensaje} (s/n): ")))
     return respuesta == "s"
 
 
@@ -276,21 +157,215 @@ def leer_dato(j: int, mensaje: str):
     return valor
 
 
-# ------------------------------------------------------------------- tablas
-def mostrar_tablas(tablas: list) -> None:
+def registrar_usuario(usuario: str, contrasenia: str) -> tuple:
+    '''
+    Devuelve el usuario y la contrasenia recibidos por parametro.
+
+    Args:
+    usuario(str): recibe el usuario a registrar
+    contrasenia(str): recibe la contrasenia a registrar
+
+    Returns:
+    Devuelve el usuario y la contrasenia
+
+    '''
+    return usuario, contrasenia
+
+
+def buscar_usuario(usuarios: list, nombre: str) -> int:
+    """Devuelve la posición del usuario en la lista (sin distinguir mayúsculas) o -1 si no existe."""
+    posicion = -1
+    i = 0
+    while i < len(usuarios) and posicion == -1:
+        if validar_usuario(pasar_minusculas(nombre), pasar_minusculas(usuarios[i][0])):
+            posicion = i
+        i += 1
+    return posicion
+
+
+def registrar_nuevo_usuario(usuarios: list) -> list:
+    """Pide los datos de una persona nueva, la agrega a la lista y devuelve [usuario, contraseña]."""
+    print("--- REGISTRO ---")
+    nuevo_usuario = recortar(input("Ingrese su nuevo nombre de usuario: "))
+    while nuevo_usuario == "" or buscar_usuario(usuarios, nuevo_usuario) != -1:
+        print("Nombre de usuario vacío o ya registrado.")
+        nuevo_usuario = recortar(input("Ingrese otro nombre de usuario: "))
+    nueva_contrasenia = input("Ingrese su nueva contraseña: ")
+
+    datos = list(registrar_usuario(nuevo_usuario, nueva_contrasenia))
+    usuarios += [datos]
+    print("Usuario registrado correctamente.")
+    return datos
+
+
+def iniciar_sesion(usuario_registrado: str, contra_regis: str):
+    '''
+    Es el inicio de sesion del programa
+
+    Args:
+    usuario_registrado(str): Recibe el usuario registrado
+    contra_regis(str): Recibe la contrasenia registrada
+
+    Returns:
+    No retorna nada
+
+    '''
+
+    nombre_usuario = input("Ingrese su nombre de usuario: ")
+
+    while not validar_usuario(pasar_minusculas(nombre_usuario), pasar_minusculas(usuario_registrado)):
+        print("Usuario incorrecto.")
+        nombre_usuario = input("Ingrese nuevamente: ")
+
+    contra_usu = input("Ingrese su contraseña: ")
+
+    validar_contrasenia(contra_usu, contra_regis)
+
+    print(f"Bienvenido, {nombre_usuario}.")
+
+
+def autenticar(usuarios: list) -> None:
+    """Una persona nueva se registra, inicia sesión y queda lista para entrar al menú."""
+    datos = registrar_nuevo_usuario(usuarios)
+    print("--- INICIO DE SESIÓN ---")
+    iniciar_sesion(datos[0], datos[1])
+
+
+def mostrar_lista_tablas(tablas: list) -> None:
     """Muestra las tablas disponibles."""
     if len(tablas) == 0:
         print(f"  (no hay tablas disponibles)")
     for i in range(len(tablas)):
-        print(f"  {i + 1}. {tablas[i][T_NOMBRE]} ({len(tablas[i][T_FILAS])} filas)")
+        print(f"  {i + 1}. {tablas[i][TABLA_NOMBRE]} ({len(tablas[i][TABLA_FILAS])} filas)")
+
+
+def rango_indices(inicio: int, fin: int) -> list:
+    """Devuelve la lista de índices desde inicio hasta fin - 1."""
+
+    indices = []
+    for i in range(inicio, fin):
+        indices += [i]
+    return indices
+
+
+def formatear_dato(dato, columna: int, es_encabezado: bool) -> str:
+    """Pasa el dato a texto y, en las columnas de notas, quita el '.0' final."""
+
+    texto = str(dato)
+    if es_encabezado == False and columna >= IDX_NOTAS and len(texto) >= 2:
+        if texto[len(texto) - 2] == "." and texto[len(texto) - 1] == "0":
+            texto = texto[:len(texto) - 2]
+    return texto
+
+
+def elegir_seleccion(matriz: list) -> tuple[list, list]:
+    """Muestra el menú y devuelve (filas, columnas) a mostrar como listas de índices."""
+
+    cant_columnas = len(matriz[0])
+    print("--- VISUALIZADOR DE TABLAS ---")
+    print("1) Mostrar tabla COMPLETA")
+    print("2) Mostrar una FILA específica")
+    print("3) Mostrar una COLUMNA específica")
+
+    opcion = leer_entero_postivo("Seleccione una opción (1, 2 o 3): ", 1, 3)
+
+    if opcion == 1:
+        filas = rango_indices(1, len(matriz))
+        columnas = rango_indices(0, cant_columnas)
+        print("--- TABLA COMPLETA ---")
+
+    elif opcion == 2:
+        cant_filas_datos = len(matriz) - 1
+        fila_elegida = leer_entero_postivo(f"Número de fila (1-{cant_filas_datos}): ", 1, cant_filas_datos)
+        filas = [fila_elegida]
+        columnas = rango_indices(0, cant_columnas)
+        print(f"--- FILA {fila_elegida} ---")
+
+    else:
+        for j in range(cant_columnas):
+            print(f"{j + 1}) {matriz[0][j]}")
+        columna_elegida = leer_entero_postivo(
+            f"Número de columna (1-{cant_columnas}): ", 1, cant_columnas) - 1
+        filas = rango_indices(1, len(matriz))
+        columnas = [columna_elegida]
+        print(f"--- COLUMNA {matriz[0][columna_elegida]} ---")
+
+    return filas, columnas
+
+
+def calcular_anchos(matriz: list, filas: list, columnas: list) -> list:
+    """Calcula el ancho de cada columna visible según su texto más largo."""
+
+    anchos = []
+    for j in range(len(columnas)):
+        columna = columnas[j]
+        ancho = len(str(matriz[0][columna]))
+        for i in range(len(filas)):
+            dato = formatear_dato(matriz[filas[i]][columna], columna, False)
+            if len(dato) > ancho:
+                ancho = len(dato)
+        anchos += [ancho]
+    return anchos
+
+
+def armar_borde(anchos: list) -> str:
+    """Arma la línea separadora, por ejemplo +------+----+."""
+
+    borde = "+"
+    for j in range(len(anchos)):
+        borde += "-" * (anchos[j] + 2) + "+"
+    return borde
+
+
+def armar_linea(matriz: list, fila: int, columnas: list, anchos: list) -> str:
+    """Arma el texto de una fila de la matriz (la fila 0 son los encabezados)."""
+
+    linea = "|"
+    for j in range(len(columnas)):
+        columna = columnas[j]
+        dato = formatear_dato(matriz[fila][columna], columna, fila == 0)
+        linea += " " + dato + " " * (anchos[j] - len(dato) + 1) + "|"
+    return linea
+
+
+def imprimir_tabla(matriz: list, filas: list, columnas: list) -> None:
+    """Imprime los encabezados y las filas indicadas."""
+    
+    anchos = calcular_anchos(matriz, filas, columnas)
+    borde = armar_borde(anchos)
+
+    print(borde)
+    print(armar_linea(matriz, 0, columnas, anchos))
+    print(borde)
+    for i in range(len(filas)):
+        print(armar_linea(matriz, filas[i], columnas, anchos))
+        print(borde)
+
+
+def mostrar_tablas(matriz: list) -> None:
+    """Permite mostrar una matriz completa, una fila o una columna."""
+    if len(matriz) < 2:
+        print("ERROR: La tabla no contiene datos suficientes para ser mostrada.")
+    else:
+        filas, columnas = elegir_seleccion(matriz)
+        imprimir_tabla(matriz, filas, columnas)
+
+
+def opcion_mostrar(tablas: list) -> None:
+    """Muestra la tabla compartida si existe."""
+    if len(tablas) == 0:
+        print("Primero debe crear la tabla compartida.")
+    else:
+        matriz = [tablas[0][TABLA_COLUMNAS]] + tablas[0][TABLA_FILAS]
+        mostrar_tablas(matriz)
 
 
 def elegir_tabla(tablas: list) -> int:
     """Muestra las tablas y devuelve el índice elegido, o -1 si cancela/no hay."""
     elegida = -1
-    mostrar_tablas(tablas)
+    mostrar_lista_tablas(tablas)
     if len(tablas) > 0:
-        elegida = leer_entero("Número de tabla (0 para cancelar): ", 0, len(tablas)) - 1
+        elegida = leer_entero_postivo("Número de tabla (0 para cancelar): ", 0, len(tablas)) - 1
     return elegida
 
 
@@ -306,44 +381,62 @@ def crear_tabla(tablas: list) -> None:
 
 def pedir_etiqueta(usar_denominacion: bool, numero: int) -> str:
     """Pide la denominación de una fila si el usuario eligió usarla."""
+    
     etiqueta = ""
     if usar_denominacion:
         etiqueta = leer_texto(f"Denominación de la fila {numero}: ")
     return etiqueta
 
 
+def calcular_nota_final(nota_pp: float, nota_sp: float) -> float:
+    """La nota final es el promedio de la Nota PP y la Nota SP."""
+    return (nota_pp + nota_sp) / 2
+
+
 def carga_secuencial(tabla: list, cantidad: int, usar_denominacion: bool) -> None:
     """Carga fila por fila: completa todas las columnas de una fila antes de pasar a la siguiente."""
-    for _ in range(cantidad):
-        numero = len(tabla[T_FILAS]) + 1
+
+    for numero in range(len(tabla[TABLA_FILAS]) + 1, len(tabla[TABLA_FILAS]) + cantidad + 1):
         print(f"--- Fila {numero} ---")
-        tabla[T_DENOMINACIONES] += [pedir_etiqueta(usar_denominacion, numero)]
+
+        tabla[TABLA_DENOMINACIONES] += [pedir_etiqueta(usar_denominacion, numero)]
+
         fila = []
-        for j in range(len(tabla[T_COLUMNAS])):
-            fila += [leer_dato(j, f"  {tabla[T_COLUMNAS][j]}: ")]
-        tabla[T_FILAS] += [fila]
+        
+        for j in range(IDX_NOTA_FINAL):
+            fila += [leer_dato(j, f"  {tabla[TABLA_COLUMNAS][j]}: ")]
+        fila += [calcular_nota_final(fila[IDX_NOTA_PP], fila[IDX_NOTA_SP])]
+        tabla[TABLA_FILAS] += [fila]
 
 
 def carga_distribuida(tabla: list, cantidad: int, usar_denominacion: bool) -> None:
     """Carga columna por columna: completa una columna para todas las filas nuevas antes de pasar a la siguiente."""
-    inicio = len(tabla[T_FILAS])
-    for k in range(cantidad):
-        tabla[T_DENOMINACIONES] += [pedir_etiqueta(usar_denominacion, inicio + k + 1)]
-        tabla[T_FILAS] += [[]]
-    for j in range(len(tabla[T_COLUMNAS])):
-        print(f"--- Columna {tabla[T_COLUMNAS][j]} ---")
-        for k in range(cantidad):
-            tabla[T_FILAS][inicio + k] += [leer_dato(j, f"  Fila {inicio + k + 1}: ")]
+
+    inicio = len(tabla[TABLA_FILAS])
+
+    for indice_fila in range(cantidad):
+        tabla[TABLA_DENOMINACIONES] += [pedir_etiqueta(usar_denominacion, inicio + indice_fila + 1)]
+        tabla[TABLA_FILAS] += [[]]
+
+    for indice_columna in range(IDX_NOTA_FINAL):
+        print(f"--- Columna {tabla[TABLA_COLUMNAS][indice_columna]} ---")
+
+        for indice_fila in range(cantidad):
+            tabla[TABLA_FILAS][inicio + indice_fila] += [leer_dato(indice_columna, f"  Fila {inicio + indice_fila + 1}: ")]
+
+    for indice_fila in range(cantidad):
+        fila = tabla[TABLA_FILAS][inicio + indice_fila]
+        fila += [calcular_nota_final(fila[IDX_NOTA_PP], fila[IDX_NOTA_SP])]
 
 
 def cargar_tabla(tabla: list) -> None:
     """Pide cantidad de filas y modo de carga, y carga la tabla."""
-    disponibles = MAX_FILAS - len(tabla[T_FILAS])
+    disponibles = MAX_FILAS - len(tabla[TABLA_FILAS])
 
     if disponibles <= 0:
         print(f"La tabla alcanzó el máximo de filas.")
     else:
-        cantidad = leer_entero(f"Cantidad de filas a cargar (1-{disponibles}): ", 1, disponibles)
+        cantidad = leer_entero_postivo(f"Cantidad de filas a cargar (1-{disponibles}): ", 1, disponibles)
         usar_denominacion = leer_si_no("¿Desea denominar las filas?")
 
         print(f"a) Carga secuencial (fila por fila)")
@@ -358,27 +451,35 @@ def cargar_tabla(tabla: list) -> None:
 
 def modificar_dato(tabla: list) -> None:
     """Modifica un dato de la tabla."""
-    if len(tabla[T_FILAS]) == 0:
+    if len(tabla[TABLA_FILAS]) == 0:
         print(f"La tabla no tiene filas.")
     else:
-        i = leer_entero(f"Número de fila (1-{len(tabla[T_FILAS])}, 0 para cancelar): ",
-                        0, len(tabla[T_FILAS])) - 1
+        i = leer_entero_postivo(f"Número de fila (1-{len(tabla[TABLA_FILAS])}, 0 para cancelar): ",
+                        0, len(tabla[TABLA_FILAS])) - 1
         if i != -1:
-            for j in range(len(tabla[T_COLUMNAS])):
-                print(f"  {j + 1}. {tabla[T_COLUMNAS][j]}")
-            j = leer_entero("Número de columna (0 para cancelar): ", 0, len(tabla[T_COLUMNAS])) - 1
-            if j != -1:
-                print(f"Valor actual: {tabla[T_FILAS][i][j]}")
-                tabla[T_FILAS][i][j] = leer_dato(j, f"Nuevo valor ({tabla[T_COLUMNAS][j]}): ")
+            for j in range(len(tabla[TABLA_COLUMNAS])):
+                print(f"  {j + 1}. {tabla[TABLA_COLUMNAS][j]}")
+            j = leer_entero_postivo("Número de columna (0 para cancelar): ", 0, len(tabla[TABLA_COLUMNAS])) - 1
+
+            if j == IDX_NOTA_FINAL:
+                print(f"La Nota final se calcula automáticamente con la Nota PP y la Nota SP.")
+
+            elif j != -1:
+                print(f"Valor actual: {tabla[TABLA_FILAS][i][j]}")
+                tabla[TABLA_FILAS][i][j] = leer_dato(j, f"Nuevo valor ({tabla[TABLA_COLUMNAS][j]}): ")
+
+                if j == IDX_NOTA_PP or j == IDX_NOTA_SP:
+                    fila = tabla[TABLA_FILAS][i]
+                    fila[IDX_NOTA_FINAL] = calcular_nota_final(fila[IDX_NOTA_PP], fila[IDX_NOTA_SP])
                 print(f"Dato modificado.")
 
 
-def menu_tablas(tablas: list) -> None:
+def opcion_tablas(tablas: list) -> None:
     """Menú del punto b: gestiona una única tabla compartida entre los usuarios."""
     volver = False
     while volver == False:
         print(f"\n--- TABLA COMPARTIDA ---")
-        mostrar_tablas(tablas)
+        mostrar_lista_tablas(tablas)
         print(f"a) Crear tabla compartida  b) Cargar filas  c) Modificar un dato  d) Volver")
         opcion = leer_opcion("Opción: ", ["a", "b", "c", "d"])
         if opcion == "a":
@@ -396,3 +497,19 @@ def menu_tablas(tablas: list) -> None:
             else:
                 modificar_dato(tablas[0])
 
+
+def mostrar_menu() -> None:
+    """Imprime el menú principal."""
+    print("=" * 75)
+    print("    Menú de opciones. Ingrese la letra correspondiente a la opción deseada.")
+    print("""
+    A. Proyectos: Generación y gestión de proyectos.
+    B. Tablas: creación y modificación de tablas.
+    C. Variables: Creación, carga y modificación de variables.
+    D. Mostrar: Mostrar por pantalla información disponible en una tabla.
+    E. Estadística: Conteos o frecuencias. Máximos y mínimos.
+    Medidas de tendencia central: promedios aritméticos y geométricos.
+    Medidas de dispersión. Medidas de posición.
+    F. Salir.
+    """)
+    print("=" * 75)
