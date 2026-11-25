@@ -189,7 +189,7 @@ def leer_nota(mensaje: str) -> float:
         float: Nota ingresada y validada.
     """
     nota = None
-    while nota is None:
+    while nota == None:
         entrada = input(mensaje)
         if es_nota(entrada):
             valor = float(entrada)
