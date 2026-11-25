@@ -1,11 +1,13 @@
 from paquete import *
 
-tablas = []
-usuarios = [[USUARIO_INICIAL, CONTRASENIA_INICIAL]]
-otro_usuario = True
+proyectos = crear_proyectos()
+usuarios = cargar_usuarios()
+proyecto_seleccionado = None
+otro_usuario = proyectos != None and usuarios != None
 
 while otro_usuario == True:
     autenticar(usuarios)
+    proyecto_seleccionado = None
     continuar = True
 
     while continuar:
@@ -14,15 +16,28 @@ while otro_usuario == True:
 
         match opcion:
             case "a":
-                print("Seleccionaste Proyectos.")
+                proyecto_seleccionado = seleccionar_proyecto(proyectos)
+                print(f"Proyecto seleccionado: {proyecto_seleccionado['nombre']}.")
             case "b":
-                opcion_tablas(tablas)
+                if proyecto_seleccionado == None:
+                    print("Error: primero debe seleccionar un proyecto (opción A).")
+                else:
+                    opcion_tablas(proyecto_seleccionado, proyectos)
             case "c":
-                print("Seleccionaste Variables.")
+                if proyecto_seleccionado == None:
+                    print("Error: primero debe seleccionar un proyecto (opción A).")
+                else:
+                    opcion_modificar(proyecto_seleccionado, proyectos)
             case "d":
-                opcion_mostrar(tablas)
+                if proyecto_seleccionado == None:
+                    print("Error: primero debe seleccionar un proyecto (opción A).")
+                else:
+                    opcion_mostrar(proyecto_seleccionado["tablas"])
             case "e":
-                print("Seleccionaste Estadística.")
+                if proyecto_seleccionado == None:
+                    print("Error: primero debe seleccionar un proyecto (opción A).")
+                else:
+                    opcion_estadistica(proyecto_seleccionado)
             case "f":
                 print("Sesión finalizada.")
                 continuar = False

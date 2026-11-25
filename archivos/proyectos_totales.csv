@@ -1,0 +1,44 @@
+Registro,Proyecto,Datos
+proyecto,1,Notas primer año,notas_primer_anio.csv
+tabla,1,0,Notas primer año,notas_primer_anio.csv,True
+columna,1,0,Nombre,str,,
+columna,1,0,Apellido,str,,
+columna,1,0,Materia,str,,
+columna,1,0,Nota PP,float,1.0,10.0
+columna,1,0,Nota SP,float,1.0,10.0
+columna,1,0,Nota final,float,,
+
+proyecto,2,Notas segundo año,notas_segundo_anio.csv
+tabla,2,0,Notas segundo año,notas_segundo_anio.csv,True
+columna,2,0,Nombre,str,,
+columna,2,0,Apellido,str,,
+columna,2,0,Materia,str,,
+columna,2,0,Nota PP,float,1.0,10.0
+columna,2,0,Nota SP,float,1.0,10.0
+columna,2,0,Nota final,float,,
+columna,2,0,Aula,int,,
+tabla,2,1,Ayudantes,,False
+columna,2,1,Nombre,str,,
+columna,2,1,Apellido,str,,
+columna,2,1,Materia,str,,
+columna,2,1,Aula,str,,
+columna,2,1,Turno,str,,
+fila,2,1,,Martin,Zotti,Programacion 2,114,Mañana
+
+proyecto,3,Vacaciones,
+tabla,3,0,Vacaciones,,False
+columna,3,0,Nombre,str,,
+columna,3,0,Apellido,str,,
+columna,3,0,Destino,str,,
+columna,3,0,Cantidad de dias,int,1,1000
+columna,3,0,Valor(usd),float,1.0,1000000.0
+fila,3,0,,Lucca,Pagano,España,15,10000.0
+
+proyecto,4,Venta de Autos,
+tabla,4,0,Venta de Autos,,False
+columna,4,0,Marca,str,,
+columna,4,0,Modelo,str,,
+columna,4,0,Año,int,1900,2026
+columna,4,0,KM,int,0,900000
+columna,4,0,Precio(usd),int,1,900000
+fila,4,0,,Fiat,Bravo,2012,68124,12500

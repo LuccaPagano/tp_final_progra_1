@@ -1,38 +1,5 @@
 MAX_LARGO = 50
 
-def validar_contrasenia(contra_usu: str, contra_regis: str) -> str:
-
-    '''
-    Valida si la contrasenia de usuario es igual a la registrada
-    
-    Args: 
-    contra_usu (str): Recibe la contrania de usuario
-    contra_regis (str): Recibe la contrasenia a comparar
-
-    Returns:
-    contra_usu (str): Devuelve la contrasenia
-    '''
-    while contra_usu != contra_regis:
-        print("Contraseña incorrecta.")
-        contra_usu = input("Ingrese su contraseña nuevamente: ")
-
-    return contra_usu
-
-def validar_usuario(nombre_usuario: str, usuario_registrado: str) -> bool:
-
-    '''
-    Valida si el nombre de usuario es igual al usuario registrado
-
-    Args:
-    nombre_usuario (str): recibe el nombre usuario ingresado
-    usuario_registrado(str): almacena el nombre de usuario guardado
-
-    Return:
-    Cambia el nombre de usuario registrado por el nuevo
-    '''
-
-    return (nombre_usuario) == (usuario_registrado)
-
 def par_impar(numero: int) -> bool:
     """Determina si un número es par o impar.
 
@@ -68,7 +35,7 @@ def es_primo(numero: int) -> bool:
         #usar while en vez del for
 
         for i in range(2, int(numero ** 0.5) + 1):
-            if numero % i == 0:
+            if es_multiplo(numero, i):
                 resultado = False
                 break
     return resultado
@@ -92,43 +59,30 @@ def es_multiplo(numero: int, multiplo: int) -> bool:
         resultado = False
     return resultado
 
-def validar_rango(valor: int, minimo: int, maximo: int) -> bool:
-    """Indica si un entero se encuentra dentro de un rango inclusivo.
-
-    La búsqueda recursiva divide el rango de enteros a la mitad en cada
-    llamada.
+def validar_rango(valor: int | float, minimo: int | float, maximo: int | float) -> bool:
+    """Indica si un número se encuentra dentro de un rango inclusivo.
 
     Args:
-        valor (int): Valor que se desea validar.
-        minimo (int): Límite inferior del rango.
-        maximo (int): Límite superior del rango.
+        valor (int | float): Valor que se desea validar.
+        minimo (int | float): Límite inferior del rango.
+        maximo (int | float): Límite superior del rango.
 
     Returns:
         bool: True si el valor está dentro del rango, False en caso contrario.
     """
-
-
-    if minimo > maximo or valor < minimo or valor > maximo:
-        return False
-
-    medio = (minimo + maximo) // 2
-
-    if valor == medio:
-        resultado = True
-    elif valor < medio:
-        resultado = validar_rango(valor, minimo, medio - 1)
-    else:
-        resultado = validar_rango(valor, medio + 1, maximo)
-
+    resultado = minimo <= valor and valor <= maximo
     return resultado
 
 
 def validar_numero(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por números (ASCII 48-57).
-    recibe un string.
-    retorna un bool.
-    '''
+    """Valida que una cadena de caracteres esté compuesta por números (ASCII 48-57).
+
+    Args:
+        cadena (str): Cadena que se va a validar.
+
+    Returns:
+        bool: True si se cumple la condición indicada; False en caso contrario.
+    """
     i = 0
     es_numero = True
 
@@ -141,11 +95,14 @@ def validar_numero(cadena: str) -> bool:
 
 
 def validar_mayusculas(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por letras mayúsculas A-Z (ASCII 65-90).
-    recibe un string.
-    retorna un bool.
-    '''
+    """Valida que una cadena de caracteres esté compuesta por letras mayúsculas A-Z (ASCII 65-90).
+
+    Args:
+        cadena (str): Cadena que se va a validar.
+
+    Returns:
+        bool: True si se cumple la condición indicada; False en caso contrario.
+    """
     i = 0
     son_mayusculas = True
 
@@ -158,11 +115,14 @@ def validar_mayusculas(cadena: str) -> bool:
 
 
 def validar_minusculas(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por letras minúsculas a-z (ASCII 97-122).
-    recibe un string.
-    retorna un bool.
-    '''
+    """Valida que una cadena de caracteres esté compuesta por letras minúsculas a-z (ASCII 97-122).
+
+    Args:
+        cadena (str): Cadena que se va a validar.
+
+    Returns:
+        bool: True si se cumple la condición indicada; False en caso contrario.
+    """
     i = 0
     son_minusculas = True
 
@@ -175,12 +135,14 @@ def validar_minusculas(cadena: str) -> bool:
 
 
 def validar_acentuadas(cadena: str) -> bool:
-    '''
-    Valida que una cadena de caracteres esté compuesta por letras acentuadas, ñ o ü
-    (códigos 192-255, excluyendo × (215) y ÷ (247)).
-    recibe un string.
-    retorna un bool.
-    '''
+    """Valida que una cadena de caracteres esté compuesta por letras acentuadas, ñ o ü
+
+    Args:
+        cadena (str): Cadena que se va a validar.
+
+    Returns:
+        bool: True si se cumple la condición indicada; False en caso contrario.
+    """
     i = 0
     son_acentuadas = True
 
@@ -192,12 +154,26 @@ def validar_acentuadas(cadena: str) -> bool:
     return son_acentuadas
 
 def es_entero(texto: str) -> bool:
-    """True si el texto es un entero sin signo."""
+    """True si el texto es un entero sin signo.
+
+    Args:
+        texto (str): Texto que se va a procesar.
+
+    Returns:
+        bool: True si se cumple la condición indicada; False en caso contrario.
+    """
     return len(texto) > 0 and validar_numero(texto)
 
 
 def es_nota(texto: str) -> bool:
-    """True si el texto es un número no negativo con a lo sumo un punto decimal."""
+    """True si el texto es un número no negativo con a lo sumo un punto decimal.
+
+    Args:
+        texto (str): Texto que se va a procesar.
+
+    Returns:
+        bool: True si se cumple la condición indicada; False en caso contrario.
+    """
     puntos = 0
     posicion = 0
     for i in range(len(texto)):
@@ -215,12 +191,14 @@ def es_nota(texto: str) -> bool:
 
 
 def es_nombre_valido(texto: str) -> bool:
-    '''
-    Valida que un texto no vacío esté compuesto solo por letras (mayúsculas, minúsculas o
-    acentuadas), espacios, guiones o apóstrofes.
-    recibe un string.
-    retorna un bool.
-    '''
+    """Valida un nombre con letras, espacios, guiones o apóstrofos.
+
+    Args:
+        texto (str): Texto que se va a procesar.
+
+    Returns:
+        bool: True si se cumple la condición indicada; False en caso contrario.
+    """
     i = 0
     tiene_letra = False
     es_valido = len(texto) > 0 and len(texto) <= MAX_LARGO
@@ -238,18 +216,23 @@ def es_nombre_valido(texto: str) -> bool:
     return es_valido and tiene_letra
 
 
-def esta_en_lista(lista: list, elemento: str) -> bool:
-    '''
-    Indica si un elemento se encuentra en una lista.
-    recibe una lista y un string.
-    retorna un bool.
-    '''
+def esta_en_lista(lista: list, elemento: str | int | float) -> bool:  # Función que verifica si un elemento está en una lista
+    """Verifica si un elemento se encuentra en una lista.
+    
+    Args:
+        lista (list): Lista donde buscar
+        elemento (str | int | float): Elemento a buscar
+    
+    Returns:
+        bool: True si el elemento está en la lista, False en caso contrario
+    """
     i = 0
     encontrado = False
 
     while i < len(lista) and encontrado == False:
         if lista[i] == elemento:
             encontrado = True
+            
         i += 1
 
     return encontrado
