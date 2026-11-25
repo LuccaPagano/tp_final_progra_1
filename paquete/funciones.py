@@ -239,13 +239,13 @@ def leer_dato_por_tipo(tipo: str, mensaje: str, rango: list = None):
     if tipo == "str":
         valor = leer_texto(mensaje)
     elif tipo == "int":
-        if rango:
+        if rango != None:
             valor = leer_entero_postivo(mensaje, int(rango[0]), int(rango[1]))
         else:
             valor = leer_entero_postivo(mensaje, 0, 999999)
     elif tipo == "float":
         valor = leer_decimal(mensaje)
-        if rango:
+        if rango != None:
             while not validar_rango(valor, rango[0], rango[1]):
                 print(f"Error: ingrese un valor entre {rango[0]} y {rango[1]}.")
                 valor = leer_decimal(mensaje)
