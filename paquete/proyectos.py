@@ -87,6 +87,9 @@ def crear_proyecto_nuevo(proyectos: dict) -> dict:
             tipo = "float"
             minimo = leer_decimal("Valor mínimo: ")
             maximo = leer_decimal("Valor máximo: ")
+            while maximo <= minimo:
+                print("Error: el valor máximo debe ser mayor que el mínimo.")
+                maximo = leer_decimal("Valor máximo: ")
             rango = [minimo, maximo]
         
         tipos_datos += [tipo]

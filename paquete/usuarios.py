@@ -181,6 +181,9 @@ def autenticar(usuarios: list) -> None:
             print("--- REGISTRO ---")
             
             nueva_contrasenia = input("Ingrese su contraseña: ")
+            while es_usuario_valido(nueva_contrasenia) == False:
+                print("Error: la contraseña debe tener al menos 4 caracteres y una letra.")
+                nueva_contrasenia = input("Ingrese su contraseña: ")
             
             datos = list(registrar_usuario(nombre_usuario, nueva_contrasenia))
             

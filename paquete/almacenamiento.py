@@ -8,29 +8,6 @@ from .validaciones import es_entero, es_nota, esta_en_lista
 ARCHIVO_PROYECTOS = "proyectos_totales.csv"
 
 
-def es_decimal_guardado(texto: str) -> bool:
-    """Indica si el texto representa un decimal, incluso en notación científica.
-
-    Args:
-        texto (str): Texto que se va a procesar.
-
-    Returns:
-        bool: True si el texto representa un decimal válido; False en caso contrario.
-    """
-    posicion = 0
-    while posicion < len(texto) and texto[posicion] != "e" and texto[posicion] != "E":
-        posicion += 1
-    if posicion == len(texto):
-        resultado = es_nota(texto)
-    else:
-        mantisa = texto[:posicion]
-        exponente = texto[posicion + 1:]
-        if len(exponente) > 0 and (exponente[0] == "+" or exponente[0] == "-"):
-            exponente = exponente[1:]
-        resultado = es_nota(mantisa) and es_entero(exponente)
-    return resultado
-
-
 def guardar_catalogo(proyectos: dict) -> None:
     """Guarda los proyectos y las tablas que no usan un archivo propio.
 
@@ -117,7 +94,7 @@ def convertir_fila(valores: list, tipos: list) -> list | None:
                 else:
                     valor = int(valor)
             elif tipos[i] == "float":
-                if es_decimal_guardado(valor) == False:
+                if es_nota(valor) == False:
                     print(f"Error: '{valor}' no es un número decimal válido.")
                     valido = False
                 else:
@@ -216,7 +193,7 @@ def procesar_registro_catalogo(registro: list, proyectos: dict) -> bool:
                         valido = False
                     else:
                         rango = [int(registro[5]), int(registro[6])]
-                elif registro[4] == "float" and es_decimal_guardado(registro[5]) and es_decimal_guardado(registro[6]):
+                elif registro[4] == "float" and es_nota(registro[5]) and es_nota(registro[6]):
                     rango = [float(registro[5]), float(registro[6])]
                 else:
                     print(f"Error: rango decimal inválido en {ARCHIVO_PROYECTOS}.")

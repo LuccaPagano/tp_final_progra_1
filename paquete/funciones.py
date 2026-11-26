@@ -225,7 +225,7 @@ def leer_opcion(mensaje: str, opciones: list) -> str:
     return opcion
 
 
-def leer_dato_por_tipo(tipo: str, mensaje: str, rango: list = None):  
+def leer_dato_por_tipo(tipo: str, mensaje: str, rango: list):  
     """Lee dato según tipo (str, int, float) y rango opcional.
 
     Args:
